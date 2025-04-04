@@ -1,13 +1,14 @@
 # skillmap/parser.py
-
 import google.generativeai as genai
+import re
+import json
 
-# 👉 Replace this with environment variable or .env later
+# Configure API Key (use .env later for security)
 genai.configure(api_key="AIzaSyBBMyvutCXPqa2O-SeHdaiGw___6KyMgyE")
 
 def parse_text_with_gemini(text: str, doc_type: str = "resume") -> dict:
     """
-    Sends text to Gemini and returns structured data as a dictionary.
+    Sends text to Gemini and attempts to extract structured data.
     """
     model = genai.GenerativeModel("models/gemini-1.5-flash")
 
@@ -15,6 +16,7 @@ def parse_text_with_gemini(text: str, doc_type: str = "resume") -> dict:
     Extract structured fields from the following {doc_type}:
     - For resume: name, skills, experience, education
     - For job: title, required_skills, responsibilities
+    Return valid JSON format without markdown or bullet points.
     Text: {text}
     """
 
@@ -22,11 +24,14 @@ def parse_text_with_gemini(text: str, doc_type: str = "resume") -> dict:
         response = model.generate_content(prompt)
         content = response.text.strip()
 
-        if content.startswith("```json"):
-            content = content[7:-3].strip()
+        # Extract JSON from response text
+        match = re.search(r'{.*}', content, re.DOTALL)
+        if match:
+            return json.loads(match.group())
 
-        return eval(content)  # replace with json.loads if needed
+        print("⚠️ No valid JSON found in Gemini response.")
+        return {}
+
     except Exception as e:
         print("[Gemini Parse Error]", e)
         return {}
-
