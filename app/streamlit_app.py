@@ -5,6 +5,8 @@ import streamlit as st
 from skillmap.parser import parse_text_with_gemini
 from skillmap.embedder import get_embedding
 from skillmap.matcher import calculate_similarity, find_skill_gap
+from skillmap.enhancer import generate_resume_summary
+
 import fitz  # PyMuPDF
 import re
 
@@ -57,6 +59,14 @@ if resume_file and job_file:
 
     st.subheader("❌ Missing Skills")
     st.write(missing if missing else "No missing skills — great fit!")
+    # Optional Resume Enhancer
+    with st.expander("✨ Enhance Resume Summary"):
+        if st.button("Generate AI Summary"):
+            with st.spinner("Generating improved summary..."):
+                enhanced_summary = generate_resume_summary(resume_text, job_text)
+            st.success("Here’s your improved summary:")
+            st.write(enhanced_summary)
+
 
     st.subheader("📋 Resume (parsed)")
     st.json(resume_data)
