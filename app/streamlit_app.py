@@ -9,6 +9,7 @@ from skillmap.enhancer import generate_resume_summary
 
 import fitz  # PyMuPDF
 import re
+import pandas as pd
 
 def extract_text(file):
     if file.name.endswith(".txt"):
@@ -26,50 +27,83 @@ def extract_text(file):
     return text.strip()
 
 # === Streamlit App ===
-st.set_page_config(page_title="SkillMap Matcher", layout="centered")
+st.set_page_config(page_title="SkillMap", layout="centered")
 
-st.title("🧠 SkillMap: Resume-to-Job Matcher")
-st.markdown("Upload a resume and a job description (PDF/TXT) to analyze match and skill gap.")
+st.title("🧠 SkillMap")
 
-# Upload files
-resume_file = st.file_uploader("📄 Upload Resume", type=["txt", "pdf"])
-job_file = st.file_uploader("📌 Upload Job Description", type=["txt", "pdf"])
+mode = st.radio("Who are you?", ["🎯 Job Seeker", "🧠 Recruiter"])
 
-# Read files and run pipeline
-if resume_file and job_file:
-    resume_text = extract_text(resume_file)
-    job_text = extract_text(job_file)
+if mode == "🎯 Job Seeker":
+    st.markdown("Upload a resume and a job description (PDF/TXT) to analyze match and skill gap.")
 
-    with st.spinner("🔍 Parsing and analyzing..."):
-        resume_data = parse_text_with_gemini(resume_text, "resume")
+    # Upload files
+    resume_file = st.file_uploader("📄 Upload Resume", type=["txt", "pdf"])
+    job_file = st.file_uploader("📌 Upload Job Description", type=["txt", "pdf"])
+
+    if resume_file and job_file:
+        resume_text = extract_text(resume_file)
+        job_text = extract_text(job_file)
+
+        with st.spinner("🔍 Parsing and analyzing..."):
+            resume_data = parse_text_with_gemini(resume_text, "resume")
+            job_data = parse_text_with_gemini(job_text, "job")
+
+            resume_embedding = get_embedding(resume_text)
+            job_embedding = get_embedding(job_text)
+
+            score = calculate_similarity(resume_embedding, job_embedding)
+            matched, missing = find_skill_gap(resume_data.get("skills", []), job_data.get("required_skills", []))
+
+        # Display results
+        st.subheader("🔗 Match Score")
+        st.metric(label="Cosine Similarity", value=f"{score:.2f}")
+
+        st.subheader("✅ Matched Skills")
+        st.write(matched if matched else "No skills matched.")
+
+        st.subheader("❌ Missing Skills")
+        st.write(missing if missing else "No missing skills — great fit!")
+
+        # Optional Resume Enhancer
+        with st.expander("✨ Enhance Resume Summary"):
+            if st.button("Generate AI Summary"):
+                with st.spinner("Generating improved summary..."):
+                    enhanced_summary = generate_resume_summary(resume_text, job_text)
+                st.success("Here’s your improved summary:")
+                st.write(enhanced_summary)
+
+        st.subheader("📋 Resume (parsed)")
+        st.json(resume_data)
+
+        st.subheader("📝 Job Description (parsed)")
+        st.json(job_data)
+
+elif mode == "🧠 Recruiter":
+    st.markdown("Upload one job description and multiple resumes (PDF/TXT) to rank candidates based on relevance.")
+
+    job_file = st.file_uploader("📌 Upload Job Description", type=["txt", "pdf"])
+    resume_files = st.file_uploader("📄 Upload Multiple Resumes", type=["txt", "pdf"], accept_multiple_files=True)
+
+    if job_file and resume_files:
+        job_text = extract_text(job_file)
         job_data = parse_text_with_gemini(job_text, "job")
-
-        resume_embedding = get_embedding(resume_text)
         job_embedding = get_embedding(job_text)
 
-        score = calculate_similarity(resume_embedding, job_embedding)
-        matched, missing = find_skill_gap(resume_data.get("skills", []), job_data.get("required_skills", []))
+        results = []
 
-    # Display results
-    st.subheader("🔗 Match Score")
-    st.metric(label="Cosine Similarity", value=f"{score:.2f}")
+        with st.spinner("🔍 Analyzing all resumes..."):
+            for resume_file in resume_files:
+                resume_text = extract_text(resume_file)
+                resume_data = parse_text_with_gemini(resume_text, "resume")
+                resume_embedding = get_embedding(resume_text)
+                score = calculate_similarity(resume_embedding, job_embedding)
+                name = resume_data.get("name", resume_file.name)
+                results.append({
+                    "Candidate": name,
+                    "Score": round(score, 2),
+                    "Top Skills": ", ".join(resume_data.get("skills", [])[:5])
+                })
 
-    st.subheader("✅ Matched Skills")
-    st.write(matched if matched else "No skills matched.")
-
-    st.subheader("❌ Missing Skills")
-    st.write(missing if missing else "No missing skills — great fit!")
-    # Optional Resume Enhancer
-    with st.expander("✨ Enhance Resume Summary"):
-        if st.button("Generate AI Summary"):
-            with st.spinner("Generating improved summary..."):
-                enhanced_summary = generate_resume_summary(resume_text, job_text)
-            st.success("Here’s your improved summary:")
-            st.write(enhanced_summary)
-
-
-    st.subheader("📋 Resume (parsed)")
-    st.json(resume_data)
-
-    st.subheader("📝 Job Description (parsed)")
-    st.json(job_data)
+        st.subheader("📊 Resume Ranking")
+        df = pd.DataFrame(results).sort_values("Score", ascending=False)
+        st.dataframe(df.reset_index(drop=True))
