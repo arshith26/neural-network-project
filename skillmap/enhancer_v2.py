@@ -31,19 +31,13 @@ def enhance_section(resume_section: str, job_context: str, section_type: str = "
 def normalize_keys(data: dict, target_keys: dict) -> dict:
     """
     Normalize dictionary keys based on synonyms defined in target_keys mapping.
-    Example:
-    target_keys = {
-        'summary': ['Summary', 'Professional Summary'],
-        'experience': ['Experience', 'Work Experience'],
-        'skills': ['Skills', 'Technical Skills']
-    }
     """
     normalized = {}
     for standard_key, possible_keys in target_keys.items():
         for key in possible_keys:
             if key in data:
                 normalized[standard_key] = data[key]
-                break  # take the first match
+                break
     return normalized
 
 def enhance_resume(resume_data: dict, job_data: dict) -> dict:
@@ -67,17 +61,40 @@ def enhance_resume(resume_data: dict, job_data: dict) -> dict:
 
     enhanced = {}
 
+    # Enhance summary
     if "summary" in resume_data and "responsibilities" in job_data:
-        enhanced["summary"] = enhance_section(resume_data["summary"], job_data["responsibilities"], section_type="summary")
+        enhanced["summary"] = enhance_section(
+            resume_data["summary"],
+            job_data["responsibilities"],
+            section_type="summary"
+        )
 
+    # Enhance experience
     if "experience" in resume_data and "responsibilities" in job_data:
-        joined_exp = "\n".join(resume_data["experience"]) if isinstance(resume_data["experience"], list) else resume_data["experience"]
-        enhanced["experience"] = enhance_section(joined_exp, job_data["responsibilities"], section_type="experience")
+        if isinstance(resume_data["experience"], list):
+            joined_exp = "\n".join(
+                f"{item.get('title', '')}: {item.get('description', '')}"
+                for item in resume_data["experience"]
+                if isinstance(item, dict)
+            )
+        else:
+            joined_exp = resume_data["experience"]
+        enhanced["experience"] = enhance_section(
+            joined_exp,
+            job_data["responsibilities"],
+            section_type="experience"
+        )
 
+    # Enhance skills
     if "skills" in resume_data and "required_skills" in job_data:
         resume_skills = ", ".join(resume_data["skills"]) if isinstance(resume_data["skills"], list) else resume_data["skills"]
         job_skills = ", ".join(job_data["required_skills"]) if isinstance(job_data["required_skills"], list) else job_data["required_skills"]
-        enhanced["skills"] = enhance_section(resume_skills, job_skills, section_type="skills")
+        enhanced["skills"] = enhance_section(
+            resume_skills,
+            job_skills,
+            section_type="skills"
+        )
 
     return enhanced
+
 

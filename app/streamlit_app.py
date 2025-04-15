@@ -1,6 +1,7 @@
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import streamlit as st
 from skillmap.parser import parse_text_with_gemini
 from skillmap.embedder import get_embedding
@@ -11,6 +12,7 @@ from skillmap.enhancer_v2 import enhance_resume
 import fitz  # PyMuPDF
 import re
 import pandas as pd
+import json
 
 def extract_text(file):
     if file.name.endswith(".txt"):
@@ -20,7 +22,6 @@ def extract_text(file):
         text = "\n".join(page.get_text() for page in pdf)
     else:
         return ""
-
     text = re.sub(r"•", " ", text)
     text = re.sub(r"[\r\n]+", " ", text)
     text = re.sub(r"\s{2,}", " ", text)
@@ -28,20 +29,28 @@ def extract_text(file):
 
 # === Streamlit App ===
 st.set_page_config(page_title="SkillMap", layout="centered")
-
 st.title("🧠 SkillMap")
 
 mode = st.radio("Who are you?", ["🎯 Job Seeker", "🧠 Recruiter"])
 
+# 🎯 Job Seeker Mode
 if mode == "🎯 Job Seeker":
-    st.markdown("Upload a resume and a job description (PDF/TXT) to analyze match and skill gap.")
+    st.markdown("Upload a resume and a job description (PDF/TXT), or paste the job description to analyze match and skill gap.")
 
     resume_file = st.file_uploader("📄 Upload Resume", type=["txt", "pdf"])
-    job_file = st.file_uploader("📌 Upload Job Description", type=["txt", "pdf"])
 
-    if resume_file and job_file:
+    job_input_mode = st.radio("📌 Job Description Input", ["Upload File", "Paste Text"])
+    job_text = ""
+
+    if job_input_mode == "Upload File":
+        job_file = st.file_uploader("Upload Job Description (PDF/TXT)", type=["txt", "pdf"])
+        if job_file:
+            job_text = extract_text(job_file)
+    else:
+        job_text = st.text_area("Paste the job description below:", height=300)
+
+    if resume_file and job_text.strip():
         resume_text = extract_text(resume_file)
-        job_text = extract_text(job_file)
 
         with st.spinner("🔍 Parsing and analyzing..."):
             resume_data = parse_text_with_gemini(resume_text, "resume")
@@ -52,6 +61,8 @@ if mode == "🎯 Job Seeker":
 
             score = calculate_similarity(resume_embedding, job_embedding)
             matched, missing = find_skill_gap(resume_data.get("skills", []), job_data.get("required_skills", []))
+            print("🔍 Using semantic skill matcher...")
+
 
         st.subheader("🔗 Match Score")
         st.metric(label="Cosine Similarity", value=f"{score:.2f}")
@@ -62,6 +73,7 @@ if mode == "🎯 Job Seeker":
         st.subheader("❌ Missing Skills")
         st.write(missing if missing else "No missing skills — great fit!")
 
+        # 🔧 Basic Summary Enhancer
         with st.expander("✨ Enhance Resume Summary"):
             if st.button("Generate AI Summary"):
                 with st.spinner("Generating improved summary..."):
@@ -69,6 +81,7 @@ if mode == "🎯 Job Seeker":
                 st.success("Here’s your improved summary:")
                 st.write(enhanced_summary)
 
+        # 🔧 Full Resume Enhancer
         with st.expander("🧠 Enhance Full Resume"):
             if st.button("Enhance My Resume Based on This Job"):
                 with st.spinner("Rewriting key sections..."):
@@ -83,12 +96,21 @@ if mode == "🎯 Job Seeker":
                 st.subheader("🛠 Refined Skills")
                 st.write(rewritten.get("skills", "No skill update generated."))
 
+                # 📥 Export
+                st.download_button(
+                    label="📥 Download Enhanced Sections (JSON)",
+                    data=json.dumps(rewritten, indent=2),
+                    file_name="enhanced_resume.json",
+                    mime="application/json"
+                )
+
         st.subheader("📋 Resume (parsed)")
         st.json(resume_data)
 
         st.subheader("📝 Job Description (parsed)")
         st.json(job_data)
 
+# 🧠 Recruiter Mode
 elif mode == "🧠 Recruiter":
     st.markdown("Upload one job description and multiple resumes (PDF/TXT) to rank candidates based on relevance.")
 
@@ -101,7 +123,6 @@ elif mode == "🧠 Recruiter":
         job_embedding = get_embedding(job_text)
 
         results = []
-
         with st.spinner("🔍 Analyzing all resumes..."):
             for resume_file in resume_files:
                 resume_text = extract_text(resume_file)
@@ -118,4 +139,3 @@ elif mode == "🧠 Recruiter":
         st.subheader("📊 Resume Ranking")
         df = pd.DataFrame(results).sort_values("Score", ascending=False)
         st.dataframe(df.reset_index(drop=True))
-
