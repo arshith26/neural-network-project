@@ -1,0 +1,212 @@
+[
+  {
+    "personal_info": {
+      "name": "Alice Smith",
+      "email": "alice.smith@example.com",
+      "phone": "555-123-4567"
+    },
+    "skills": ["Python", "SQL", "TensorFlow", "Pandas", "scikit-learn"],
+    "work_experience": [
+      {
+        "company": "DataCorp",
+        "role": "Data Analyst",
+        "duration": "Jan 2022 – Present",
+        "details": "Analyzed sales and customer data to identify key growth opportunities, reducing churn by 12%."
+      },
+      {
+        "company": "Insight Solutions",
+        "role": "Junior Analyst",
+        "duration": "Jun 2020 – Dec 2021",
+        "details": "Built dashboards in Tableau and Power BI to track KPIs for marketing campaigns."
+      }
+    ],
+    "projects": [
+      {
+        "title": "Sales Forecasting Model",
+        "description": "Developed ARIMA and LSTM models to predict monthly product sales with 95% accuracy."
+      },
+      {
+        "title": "Customer Segmentation",
+        "description": "Used K-means clustering to segment customers, improving targeted marketing ROI by 18%."
+      }
+    ],
+    "education": [
+      {
+        "institution": "State University",
+        "degree": "M.S. in Data Science",
+        "year": "2022"
+      },
+      {
+        "institution": "State University",
+        "degree": "B.S. in Statistics",
+        "year": "2020"
+      }
+    ]
+  },
+  {
+    "personal_info": {
+      "name": "Bob Johnson",
+      "email": "bob.johnson@example.com",
+      "phone": "555-234-5678"
+    },
+    "skills": ["Java", "Spring Boot", "MySQL", "REST APIs", "Docker"],
+    "work_experience": [
+      {
+        "company": "TechFlow",
+        "role": "Backend Engineer",
+        "duration": "Mar 2021 – Present",
+        "details": "Designed and implemented RESTful services handling 1M+ requests/day."
+      },
+      {
+        "company": "WebWorks",
+        "role": "Software Developer Intern",
+        "duration": "Jun 2020 – Feb 2021",
+        "details": "Collaborated on e-commerce platform features in Java and JavaScript."
+      }
+    ],
+    "projects": [
+      {
+        "title": "Order Management System",
+        "description": "Built a microservices-based order tracking system with RabbitMQ integration."
+      }
+    ],
+    "education": [
+      {
+        "institution": "Tech Institute",
+        "degree": "B.S. in Computer Engineering",
+        "year": "2021"
+      }
+    ]
+  },
+  {
+    "personal_info": {
+      "name": "Carol Lee",
+      "email": "carol.lee@example.com",
+      "phone": "555-345-6789"
+    },
+    "skills": ["JavaScript", "React", "Node.js", "GraphQL", "CSS"],
+    "work_experience": [
+      {
+        "company": "CreativeApps",
+        "role": "Frontend Developer",
+        "duration": "Jul 2022 – Present",
+        "details": "Implemented responsive React components and improved page load times by 30%."
+      }
+    ],
+    "projects": [
+      {
+        "title": "Portfolio Website",
+        "description": "Created a personal portfolio in React with animations and content management."
+      },
+      {
+        "title": "Real-Time Chat App",
+        "description": "Built a Node.js/Socket.io chat application with user authentication."
+      }
+    ],
+    "education": [
+      {
+        "institution": "City College",
+        "degree": "B.A. in Graphic Design",
+        "year": "2020"
+      }
+    ]
+  },
+  {
+    "personal_info": {
+      "name": "David Martinez",
+      "email": "david.martinez@example.com",
+      "phone": "555-456-7890"
+    },
+    "skills": ["R", "Python", "Shiny", "ggplot2", "Tableau"],
+    "work_experience": [
+      {
+        "company": "HealthAnalytics",
+        "role": "Data Scientist",
+        "duration": "Feb 2020 – Present",
+        "details": "Developed predictive models for patient readmission risk, reducing costs by 15%."
+      }
+    ],
+    "projects": [
+      {
+        "title": "Interactive Dashboard",
+        "description": "Built R/Shiny dashboard to visualize hospital performance metrics."
+      }
+    ],
+    "education": [
+      {
+        "institution": "National University",
+        "degree": "M.S. in Biostatistics",
+        "year": "2020"
+      },
+      {
+        "institution": "National University",
+        "degree": "B.S. in Biology",
+        "year": "2018"
+      }
+    ]
+  },
+  {
+    "personal_info": {
+      "name": "Eva Chen",
+      "email": "eva.chen@example.com",
+      "phone": "555-567-8901"
+    },
+    "skills": ["C++", "ROS", "OpenCV", "Git", "Linux"],
+    "work_experience": [
+      {
+        "company": "RoboTech",
+        "role": "Robotics Engineer",
+        "duration": "May 2021 – Present",
+        "details": "Designed computer vision pipelines for autonomous navigation using OpenCV."
+      }
+    ],
+    "projects": [
+      {
+        "title": "Autonomous Drone",
+        "description": "Implemented real-time obstacle detection and avoidance on an embedded platform."
+      }
+    ],
+    "education": [
+      {
+        "institution": "Tech University",
+        "degree": "B.S. in Mechanical Engineering",
+        "year": "2021"
+      }
+    ]
+  },
+  {
+    "personal_info": {
+      "name": "Frank Nguyen",
+      "email": "frank.nguyen@example.com",
+      "phone": "555-678-9012"
+    },
+    "skills": ["AWS", "Terraform", "Kubernetes", "Python", "CI/CD"],
+    "work_experience": [
+      {
+        "company": "CloudWorks",
+        "role": "DevOps Engineer",
+        "duration": "Aug 2022 – Present",
+        "details": "Automated infrastructure provisioning with Terraform and Ansible."
+      },
+      {
+        "company": "ScaleIT",
+        "role": "Site Reliability Intern",
+        "duration": "Jun 2021 – Jul 2022",
+        "details": "Monitored system performance; reduced mean time to recovery by 20%."
+      }
+    ],
+    "projects": [
+      {
+        "title": "K8s CI/CD Pipeline",
+        "description": "Built Kubernetes-based continuous deployment pipeline using Jenkins."
+      }
+    ],
+    "education": [
+      {
+        "institution": "Engineering College",
+        "degree": "B.S. in Computer Science",
+        "year": "2022"
+      }
+    ]
+  }
+]

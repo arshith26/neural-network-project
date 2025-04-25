@@ -1,0 +1,80 @@
+[
+  {
+    "job_id": "JD001",
+    "title": "Data Analyst",
+    "company": "DataCorp",
+    "location": "New York, NY",
+    "posted_date": "2024-03-15",
+    "description": "Analyze sales and customer data to identify trends and insights. Build dashboards and reports to support business decisions.",
+    "requirements": [
+      "Bachelor’s degree in Statistics, Mathematics, or related field",
+      "Proficiency in SQL and Python",
+      "Experience with Tableau or Power BI"
+    ]
+  },
+  {
+    "job_id": "JD002",
+    "title": "Backend Engineer",
+    "company": "TechFlow",
+    "location": "San Francisco, CA",
+    "posted_date": "2024-04-01",
+    "description": "Design and develop RESTful APIs and microservices. Ensure high performance and scalability of backend systems.",
+    "requirements": [
+      "B.S. in Computer Science or equivalent experience",
+      "Strong Java and Spring Boot skills",
+      "Experience with Docker and Kubernetes"
+    ]
+  },
+  {
+    "job_id": "JD003",
+    "title": "Frontend Developer",
+    "company": "CreativeApps",
+    "location": "Austin, TX",
+    "posted_date": "2024-02-20",
+    "description": "Implement responsive web interfaces using modern JavaScript frameworks. Collaborate with designers to deliver pixel-perfect UI.",
+    "requirements": [
+      "Proficiency in React and Redux",
+      "Strong HTML5, CSS3, and JavaScript skills",
+      "Familiarity with RESTful APIs"
+    ]
+  },
+  {
+    "job_id": "JD004",
+    "title": "DevOps Engineer",
+    "company": "CloudWorks",
+    "location": "Seattle, WA",
+    "posted_date": "2024-03-30",
+    "description": "Automate infrastructure provisioning and deployments. Monitor system performance and reliability.",
+    "requirements": [
+      "Experience with AWS and Terraform",
+      "Knowledge of CI/CD pipelines (Jenkins, GitLab CI)",
+      "Familiarity with container orchestration (Kubernetes)"
+    ]
+  },
+  {
+    "job_id": "JD005",
+    "title": "Machine Learning Engineer",
+    "company": "InsightAI",
+    "location": "Boston, MA",
+    "posted_date": "2024-04-10",
+    "description": "Develop and deploy ML models for predictive analytics. Work with data scientists to productionize prototypes.",
+    "requirements": [
+      "Strong Python and TensorFlow/PyTorch experience",
+      "Understanding of data preprocessing and feature engineering",
+      "Familiarity with Docker and cloud deployments"
+    ]
+  },
+  {
+    "job_id": "JD006",
+    "title": "Full Stack Developer",
+    "company": "WebWorks",
+    "location": "Chicago, IL",
+    "posted_date": "2024-03-05",
+    "description": "Build and maintain both frontend and backend components of web applications. Ensure end-to-end performance and security.",
+    "requirements": [
+      "Experience with Node.js and Express",
+      "Proficiency in Angular or Vue.js",
+      "Knowledge of MongoDB or PostgreSQL"
+    ]
+  }
+]
