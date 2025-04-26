@@ -8,6 +8,7 @@ from skillmap.embedder import get_embedding
 from skillmap.matcher import calculate_similarity, find_skill_gap
 from skillmap.enhancer import generate_resume_summary
 from skillmap.enhancer_v2 import enhance_resume
+from skillmap.deep_matcher import deep_match_score
 
 import fitz  # PyMuPDF
 import re
@@ -60,12 +61,16 @@ if mode == "🎯 Job Seeker":
             job_embedding = get_embedding(job_text)
 
             score = calculate_similarity(resume_embedding, job_embedding)
+            deep_score = deep_match_score(resume_text, job_text)
+
             matched, missing = find_skill_gap(resume_data.get("skills", []), job_data.get("required_skills", []))
-            print("🔍 Using semantic skill matcher...")
 
-
-        st.subheader("🔗 Match Score")
-        st.metric(label="Cosine Similarity", value=f"{score:.2f}")
+        st.subheader("🔗 Match Scores")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.metric(label="Cosine Similarity", value=f"{score:.2f}")
+        with col2:
+            st.metric(label="Deep LSTM Similarity", value=f"{deep_score:.2f}")
 
         st.subheader("✅ Matched Skills")
         st.write(matched if matched else "No skills matched.")
@@ -93,12 +98,11 @@ if mode == "🎯 Job Seeker":
                 st.subheader("💼 Enhanced Experience")
                 st.write(rewritten.get("experience", "No experience generated."))
 
-                st.subheader("🛠 Refined Skills")
+                st.subheader("🛠️ Refined Skills")
                 st.write(rewritten.get("skills", "No skill update generated."))
 
-                # 📥 Export
                 st.download_button(
-                    label="📥 Download Enhanced Sections (JSON)",
+                    label="📅 Download Enhanced Sections (JSON)",
                     data=json.dumps(rewritten, indent=2),
                     file_name="enhanced_resume.json",
                     mime="application/json"
@@ -110,8 +114,8 @@ if mode == "🎯 Job Seeker":
         st.subheader("📝 Job Description (parsed)")
         st.json(job_data)
 
-# 🧠 Recruiter Mode
-elif mode == "🧠 Recruiter":
+# 🫠 Recruiter Mode
+elif mode == "🫠 Recruiter":
     st.markdown("Upload one job description and multiple resumes (PDF/TXT) to rank candidates based on relevance.")
 
     job_file = st.file_uploader("📌 Upload Job Description", type=["txt", "pdf"])
