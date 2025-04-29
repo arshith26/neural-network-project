@@ -3,7 +3,7 @@
 import torch
 import pickle
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-from skillmap.deep_matcher_model import JobDescriptionModel
+from deep_matcher_model import JobDescriptionModel
 
 # Load tokenizer
 with open("skillmap/assests/data/tokenizer.pkl", "rb") as f:
