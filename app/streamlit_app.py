@@ -72,11 +72,20 @@ if mode == "🎯 Job Seeker":
         with col2:
             st.metric(label="Deep LSTM Similarity", value=f"{deep_score:.2f}")
 
+        # ✅ Matched Skills (clean text display)
         st.subheader("✅ Matched Skills")
-        st.write(matched if matched else "No skills matched.")
+        if matched:
+            st.write(", ".join(matched))
+        else:
+            st.write("No matched skills found.")
 
+        # ❌ Missing Skills (bulleted list)
         st.subheader("❌ Missing Skills")
-        st.write(missing if missing else "No missing skills — great fit!")
+        if missing:
+            for skill in missing:
+                st.markdown(f"- {skill}")
+        else:
+            st.write("No missing skills — great fit!")
 
         # 🔧 Basic Summary Enhancer
         with st.expander("✨ Enhance Resume Summary"):
@@ -143,3 +152,4 @@ elif mode == "🫠 Recruiter":
         st.subheader("📊 Resume Ranking")
         df = pd.DataFrame(results).sort_values("Score", ascending=False)
         st.dataframe(df.reset_index(drop=True))
+
