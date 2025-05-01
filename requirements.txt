@@ -1,0 +1,12 @@
+torch>=1.13.0
+tensorflow>=2.11.0
+scikit-learn>=1.2.0
+sentence-transformers>=2.2.2
+google-generativeai>=0.2.0
+transformers>=4.30.0
+streamlit>=1.24.0
+pandas>=1.5.0
+python-docx>=0.8.11
+PyMuPDF>=1.22.0
+regex
+numpy
