@@ -1,9 +1,8 @@
-# skillmap/matcher.py
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 from sentence_transformers import SentenceTransformer
 
-# Load model once here
+
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
 def calculate_similarity(resume_embedding, job_embedding):

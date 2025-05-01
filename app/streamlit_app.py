@@ -10,11 +10,12 @@ from skillmap.enhancer import generate_resume_summary
 from skillmap.enhancer_v2 import enhance_resume
 from skillmap.deep_matcher import deep_match_score
 
-import fitz  # PyMuPDF
+import fitz  # for reading PDFs
 import re
 import pandas as pd
 import json
 
+# extract text from txt or pdf files
 def extract_text(file):
     if file.name.endswith(".txt"):
         text = file.read().decode("utf-8")
@@ -28,18 +29,16 @@ def extract_text(file):
     text = re.sub(r"\s{2,}", " ", text)
     return text.strip()
 
-# === Streamlit App ===
 st.set_page_config(page_title="SkillMap", layout="centered")
 st.title("🧠 SkillMap")
 
 mode = st.radio("Who are you?", ["🎯 Job Seeker", "🧠 Recruiter"])
 
-# 🎯 Job Seeker Mode
+# job seeker mode
 if mode == "🎯 Job Seeker":
     st.markdown("Upload a resume and a job description (PDF/TXT), or paste the job description to analyze match and skill gap.")
 
     resume_file = st.file_uploader("📄 Upload Resume", type=["txt", "pdf"])
-
     job_input_mode = st.radio("📌 Job Description Input", ["Upload File", "Paste Text"])
     job_text = ""
 
@@ -72,14 +71,12 @@ if mode == "🎯 Job Seeker":
         with col2:
             st.metric(label="Deep LSTM Similarity", value=f"{deep_score:.2f}")
 
-        # ✅ Matched Skills (clean text display)
         st.subheader("✅ Matched Skills")
         if matched:
             st.write(", ".join(matched))
         else:
             st.write("No matched skills found.")
 
-        # ❌ Missing Skills (bulleted list)
         st.subheader("❌ Missing Skills")
         if missing:
             for skill in missing:
@@ -87,7 +84,6 @@ if mode == "🎯 Job Seeker":
         else:
             st.write("No missing skills — great fit!")
 
-        # 🔧 Basic Summary Enhancer
         with st.expander("✨ Enhance Resume Summary"):
             if st.button("Generate AI Summary"):
                 with st.spinner("Generating improved summary..."):
@@ -95,14 +91,10 @@ if mode == "🎯 Job Seeker":
                 st.success("Here’s your improved summary:")
                 st.write(enhanced_summary)
 
-        # 🔧 Full Resume Enhancer
         with st.expander("🧠 Enhance Full Resume"):
             if st.button("Enhance My Resume Based on This Job"):
                 with st.spinner("Rewriting key sections..."):
                     rewritten = enhance_resume(resume_data, job_data)
-
-                st.subheader("🧠 Improved Summary")
-                st.write(rewritten.get("summary", "No summary generated."))
 
                 st.subheader("💼 Enhanced Experience")
                 st.write(rewritten.get("experience", "No experience generated."))
@@ -123,8 +115,8 @@ if mode == "🎯 Job Seeker":
         st.subheader("📝 Job Description (parsed)")
         st.json(job_data)
 
-# 🫠 Recruiter Mode
-elif mode == "🫠 Recruiter":
+# recruiter mode
+elif mode == "🧠 Recruiter":
     st.markdown("Upload one job description and multiple resumes (PDF/TXT) to rank candidates based on relevance.")
 
     job_file = st.file_uploader("📌 Upload Job Description", type=["txt", "pdf"])
@@ -152,4 +144,3 @@ elif mode == "🫠 Recruiter":
         st.subheader("📊 Resume Ranking")
         df = pd.DataFrame(results).sort_values("Score", ascending=False)
         st.dataframe(df.reset_index(drop=True))
-

@@ -2,15 +2,12 @@
 
 import google.generativeai as genai
 
-# Configure Gemini API key (can use os.getenv in production)
+# setup Gemini model
 genai.configure(api_key="AIzaSyBBMyvutCXPqa2O-SeHdaiGw___6KyMgyE")
-
 model = genai.GenerativeModel("models/gemini-1.5-flash")
 
+# improve a resume section using job context
 def enhance_section(resume_section: str, job_context: str, section_type: str = "summary") -> str:
-    """
-    Enhances a specific section of a resume based on job description context.
-    """
     prompt = f"""
     Here is a candidate's {section_type} section:
     {resume_section}
@@ -26,12 +23,10 @@ def enhance_section(resume_section: str, job_context: str, section_type: str = "
         return response.text.strip()
     except Exception as e:
         print(f"[Gemini Enhance Error] {e}")
-        return resume_section  # fallback
+        return resume_section
 
+# remap keys to standard field names
 def normalize_keys(data: dict, target_keys: dict) -> dict:
-    """
-    Normalize dictionary keys based on synonyms defined in target_keys mapping.
-    """
     normalized = {}
     for standard_key, possible_keys in target_keys.items():
         for key in possible_keys:
@@ -40,12 +35,8 @@ def normalize_keys(data: dict, target_keys: dict) -> dict:
                 break
     return normalized
 
+# enhance summary, experience, and skills using Gemini
 def enhance_resume(resume_data: dict, job_data: dict) -> dict:
-    """
-    Enhance multiple parts of the resume using job description as context.
-    Returns a dictionary with updated summary, experience, and skills.
-    """
-    # Normalize both resume and job field names
     resume_fields = {
         "summary": ["summary", "Summary", "Professional Summary"],
         "experience": ["experience", "Experience", "Work Experience"],
@@ -61,7 +52,6 @@ def enhance_resume(resume_data: dict, job_data: dict) -> dict:
 
     enhanced = {}
 
-    # Enhance summary
     if "summary" in resume_data and "responsibilities" in job_data:
         enhanced["summary"] = enhance_section(
             resume_data["summary"],
@@ -69,7 +59,6 @@ def enhance_resume(resume_data: dict, job_data: dict) -> dict:
             section_type="summary"
         )
 
-    # Enhance experience
     if "experience" in resume_data and "responsibilities" in job_data:
         if isinstance(resume_data["experience"], list):
             joined_exp = "\n".join(
@@ -85,7 +74,6 @@ def enhance_resume(resume_data: dict, job_data: dict) -> dict:
             section_type="experience"
         )
 
-    # Enhance skills
     if "skills" in resume_data and "required_skills" in job_data:
         resume_skills = ", ".join(resume_data["skills"]) if isinstance(resume_data["skills"], list) else resume_data["skills"]
         job_skills = ", ".join(job_data["required_skills"]) if isinstance(job_data["required_skills"], list) else job_data["required_skills"]
@@ -96,5 +84,3 @@ def enhance_resume(resume_data: dict, job_data: dict) -> dict:
         )
 
     return enhanced
-
-

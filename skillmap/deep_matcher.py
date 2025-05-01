@@ -1,19 +1,17 @@
-# skillmap/deep_matcher.py
-
 import torch
 import pickle
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from skillmap.deep_matcher_model import JobDescriptionModel
 
-# Load tokenizer
+# load tokenizer
 with open("skillmap/assests/data/tokenizer.pkl", "rb") as f:
     tokenizer = pickle.load(f)
 
-# Load label encoder
+# load label encoder
 with open("skillmap/assests/data/label_encoder.pkl", "rb") as f:
     label_encoder = pickle.load(f)
 
-# Initialize model
+# setting up the model
 vocab_size = len(tokenizer.word_index) + 1
 embedding_dim = 64
 hidden_dim = 128
@@ -23,7 +21,7 @@ deep_model = JobDescriptionModel(vocab_size, embedding_dim, hidden_dim, num_clas
 deep_model.load_state_dict(torch.load("skillmap/assests/data/job_description_model.pth", map_location="cpu"))
 deep_model.eval()
 
-# Deep match score function
+#Similarity between resume and JD using LSTM model output
 def deep_match_score(resume_text, job_text):
     resume_seq = tokenizer.texts_to_sequences([resume_text])
     job_seq = tokenizer.texts_to_sequences([job_text])
@@ -39,7 +37,8 @@ def deep_match_score(resume_text, job_text):
         resume_vec = deep_model(resume_tensor).numpy()
         job_vec = deep_model(job_tensor).numpy()
 
+    # cosine similarity
     numerator = (resume_vec * job_vec).sum()
-    denominator = ( (resume_vec**2).sum()**0.5 ) * ( (job_vec**2).sum()**0.5 )
+    denominator = ((resume_vec**2).sum()**0.5) * ((job_vec**2).sum()**0.5)
     similarity = numerator / denominator
     return similarity
