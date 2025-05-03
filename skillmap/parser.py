@@ -1,15 +1,22 @@
-# skillmap/parser.py
+"""Parser for extracting structured JSON data from resumes or job descriptions using Gemini."""
 
 import google.generativeai as genai
 import re
 import json
 
-# Set Gemini API key
-genai.configure(api_key="AIzaSyBBMyvutCXPqa2O-SeHdaiGw___6KyMgyE")
+# Configure Gemini API
+genai.configure(api_key="AIzaSyBBMyvutCXPqa2O-SeHdaiGw___6KyMgyE")  # ⚠️ Move to .env in production
+
 
 def parse_text_with_gemini(text: str, doc_type: str = "resume") -> dict:
-    """
-    Parses resume or job description text into structured JSON using Gemini.
+    """Parses resume or job description text into structured JSON using Gemini.
+
+    Args:
+        text: Raw input text (resume or job description).
+        doc_type: Type of document to parse: "resume" or "job".
+
+    Returns:
+        Parsed content as a Python dictionary. Returns empty dict on failure.
     """
     model = genai.GenerativeModel("models/gemini-1.5-flash")
 

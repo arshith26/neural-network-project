@@ -45,13 +45,13 @@ skillmap/
 ## 🔧 Installation
 
 ```bash
+pip install --upgrade streamlit
 pip install -r requirements.txt
 
 Usage:
 To run the web app:
-streamlit run skillmap/app.py
-To run evaluation:
-python skillmap/evaluate_models.py
+streamlit run app/streamlit_app.py
+
 
 📄 Requirements
 Python ≥ 3.8
